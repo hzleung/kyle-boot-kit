@@ -1,0 +1,8 @@
+/node_modules/
+/logs/
+/src/
+/app/
+/stub/
+/temp/
+/app/
+/.vscode/

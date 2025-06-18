@@ -1,0 +1,11 @@
+/node_modules/
+/logs/
+/lib/
+/types/
+/app/
+/stub/
+/app/config.yml
+/app/corssSite.json
+/.DS_Store
+/**/*/.DS_Store
+/temp/
