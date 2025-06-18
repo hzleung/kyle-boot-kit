@@ -1,11 +1,11 @@
 {
-    "name": "elmer-boot",
-    "version": "3.0.1",
+    "name": "kyle-boot",
+    "version": "1.0.0",
     "description": "",
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "bin": {
-        "elmer-sev": "./lib/bin.js"
+        "kyle-sev": "./lib/bin.js"
     },
     "scripts": {
         "start": "ts-node ./app/index.ts APP_ENV=PROD configPath=./app",

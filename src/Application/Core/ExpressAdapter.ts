@@ -103,7 +103,7 @@ export class ExpressAdapter extends Adapter {
                 case "SessionId": {
                     const SSIDKey = this.configuration.Session?.sessionIdKey || GLOBAL_KEY_SESSION_ID_KEY;
                     let saveSSID = this.getCookies(req, SSIDKey);
-                    if(utils.isEmpty(saveSSID)) {
+                    if (utils.isEmpty(saveSSID)) {
                         const oldSessionId = this.getCookies(req, SSIDKey);
                         if (utils.isEmpty(oldSessionId)) {
                             const newSessionId = utils.md5(`session_${utils.uuid()}_${Date.now()}`);
@@ -154,20 +154,16 @@ export class ExpressAdapter extends Adapter {
                 try {
                     log.error(error.stack);
                     res.status(/^[\d]+$/.test(error.code) ? error.code || 500 : 500);
-                    if(error.code !== 'ERR_HTTP_HEADERS_SENT') {
+                    if (error.code !== 'ERR_HTTP_HEADERS_SENT') {
                         //链接为关闭时才可以发送错误信息到前端，防止系统错误
                         if (error.data) {
-                            res.send({
-                                statusCode: error.statusCode || "Unknown",
-                                message: error.message,
-                                stack: error.data
-                            })
+                            res.send(error.data)
                         } else {
                             res.send({ statusCode: error.statusCode || "Unknown", message: error.message });
                         }
                     }
                     afterRequestHandler();
-                } catch(e) {
+                } catch (e) {
                     log.error(e.stack);
                     res.sendStatus(500);
                     res.send();
@@ -256,13 +252,13 @@ export class ExpressAdapter extends Adapter {
             const isSimpleRequestWithCrossOrigin = crossOriginObj.isSempleRequestWithCrossOrigin(crossOriginCheckOption);
             log.info(`${req.method} ${req.originalUrl}`);
 
-            if(req.method === "OPTIONS" || isSimpleRequestWithCrossOrigin) {
+            if (req.method === "OPTIONS" || isSimpleRequestWithCrossOrigin) {
                 const matchAllowHeaders = crossOriginObj.isValidateRequest(crossOriginCheckOption);
                 if (matchAllowHeaders) {
                     matchAllowHeaders.forEach((header) => {
                         res.header(header.name, header.value);
                     });
-                    if(req.method === "OPTIONS") {
+                    if (req.method === "OPTIONS") {
                         // 只有options请求发送空数据并结束请求。
                         res.send({});
                         return;

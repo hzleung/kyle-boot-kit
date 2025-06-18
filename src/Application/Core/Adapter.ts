@@ -1,5 +1,5 @@
 import { IConfigApplication } from "../../Config/interface";
-import { Observe } from "elmer-common/lib/";
+import { Observe } from "kyle-common/lib/";
 import { IDefineRequestParam } from "../Request/Annotation";
 import { Log } from "./Log";
 
@@ -23,16 +23,16 @@ export abstract class Adapter {
     abstract getParam(opt: IDefineRequestParam[], ...args: any[]): any[];
 
     private observe: Observe<IAdapterEvent> = new Observe();
-    
+
     init(configuration: IConfigApplication) {
         (this as any).configuration = configuration;
     }
-     
+
     on<EventName extends keyof IAdapterEvent>(event: EventName, fn: IAdapterEvent[EventName]) {
         this.observe.on(event, fn);
     }
     emit<EventName extends keyof IAdapterEvent>(event: EventName, ...args: any[]) {
         return this.observe.emit(event, ...args);
     }
-    
+
 }
