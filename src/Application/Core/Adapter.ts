@@ -1,5 +1,5 @@
 import { IConfigApplication } from "../../Config/interface";
-import { Observe } from "kyle-common/lib/";
+import { Observe } from "kyleleung-common/lib/";
 import { IDefineRequestParam } from "../Request/Annotation";
 import { Log } from "./Log";
 

@@ -1,35 +1,72 @@
-# kyle-boot
+# kyleleung-boot-kit
 
-NodeJs 服务端框架，基于 typescript 5.6 开发，使用最新版装饰器封装，默认基于 Express 4.26
+🚀 一个基于 TypeScript 5.6 的 Node.js 服务端开发框架，采用 **最新装饰器语法** 封装，默认使用 **Express 4.26**，支持模块注入、配置管理、请求处理等特性，适用于快速构建中大型后端服务。
 
-### 开发进度
+---
 
-- [x] 读取配置信息，合并根据运行环境配置信息
-- [x] 基本路由监听，参数读取封装
-- [x] 模块注入，完成 AppRequest
-- [ ] 配置参数通过命令初始化模板
-- [ ] 数据库连接，Mysql
-- [x] 请求参数校验，使用 Json Schema 方式定义
-- [ ] Session 数据保存
-- [ ] 全局数据共享
-- [ ] 单个请求数据共享
-- [ ] Session 数据共享
-- [ ] 文件上传保存
-- [x] 跨域请求检查
-- [ ] 请求转发
-- [ ] 模拟消息队列处理
-- [ ] 并发请求处理
-- [ ] 新增注解给路由加注释，并生成文档
-- [x] Json 转 Typescript 类型
+## ✨ 特性亮点
 
-#### 命令行参数
+- 支持多环境配置合并
+- 完整的模块装饰器体系
+- 请求参数自动映射与校验（基于 JSON Schema）
+- 支持跨域检查、中间件扩展
+- 可选 Session 持久化、请求数据共享
+- 命令行启动参数灵活
+- TypeScript 类型自动生成支持
 
-|    参数    | 说明         |
-| :--------: | :----------- |
-|  APP_ENV   | 运行环境     |
-| configPath | 配置文件路径 |
+---
 
-#### 配置参数
+## 📦 安装使用
+
+```bash
+npm install kyleleung-boot-kit
+```
+
+开发启动：
+
+```bash
+npm run dev
+```
+
+生产构建：
+
+```bash
+npm run build
+```
+
+---
+
+## 🧱 开发进度
+
+- ✅ 配置读取与多环境合并
+- ✅ 路由与参数封装
+- ✅ 模块注入机制（AppRequest）
+- ⬜ 配置命令初始化模板
+- ⬜ 数据库连接（MySQL）
+- ✅ 请求参数校验（JSON Schema）
+- ⬜ Session 持久化
+- ⬜ 全局数据共享
+- ⬜ 请求作用域数据共享
+- ⬜ 文件上传支持
+- ✅ 跨域请求处理
+- ⬜ 请求转发代理
+- ⬜ 模拟消息队列支持
+- ⬜ 并发任务处理
+- ⬜ 注解生成接口文档
+- ✅ JSON 转 TypeScript 类型定义工具
+
+---
+
+## 🧾 命令行参数
+
+| 参数         | 说明         |
+| ------------ | ------------ |
+| `APP_ENV`    | 运行环境名称 |
+| `configPath` | 配置文件路径 |
+
+---
+
+## ⚙️ 配置文件格式（YAML）
 
 ```yaml
 Server:
@@ -41,34 +78,56 @@ Server:
   uploadPath: "./stub/res"
   tempPath: "./stub/temp"
   otherPath: "/Users/mnt/api"
+
 Log:
   level: info
   savePath: "./logs"
+
 Session:
   enabled: true
   timeout: 120000
+
 Email:
-  pop3: pop3.163.com,
+  pop3: pop3.163.com
   smtp: smtp.163.com
   user: kyle@163.com
   accessKey: 123456
 ```
 
-#### 装饰器
+---
 
-| 装饰器          | 功能              | 特殊说明                                                                                                                                                                                       |
-| --------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| BootApplication | 装载启动类        | 标识启动类，将在启动类装载运行所需配置信息                                                                                                                                                     |
-| Config          | 装载配置文件信息  | 此装饰器必须在启动类使用                                                                                                                                                                       |
-| GetConfig       | 获取配置信息      | 获取系统配置信息，示例：`@GetConfig("Server", "host")`                                                                                                                                         |
-| AppService      | 装载 Service 模块 | 装载的类在一个 application 中只会初始化一次，并在服务停止时销毁                                                                                                                                |
-| AppRequest      | Request 类模块    | 一个请求初始化一次，在请求结束时销毁                                                                                                                                                           |
-| AppModel        | 模块注入          | 类装饰器，注入模块系统自动初始化模块， 示例：`@AppModel([ TestModel1, TestModel2 ])`, 在 constructor 接收初始化对象，`constructor(private model1: TestModel1, private model2: TestModel2)) {}` |
-| RequestMapping  | 定义路由          | 定义路由，示例 ：`@RequestMapping("/example", "GET")`                                                                                                                                          |
-| Get             | 定义 Get 路由     | Get 路由，示例：`@Get("/example")`                                                                                                                                                             |
-| Post            | 定义 POST 路由    | Post 路由，示例：`@POST("/example")`                                                                                                                                                           |
-| GetParam        | 获取请求参数      | 此装饰器必须在定义路由装饰器之后使用， 详细用法参考：[使用教程](/doc/GetParam "点击跳转到详细教程")                                                                                            |
+## 🧩 装饰器一览
 
-#### 扩展模块
+| 装饰器             | 说明                 | 示例 / 说明                          |
+| ------------------ | -------------------- | ------------------------------------ |
+| `@BootApplication` | 启动类入口           | 自动装载配置与模块                   |
+| `@Config`          | 装载配置数据         | 启动类中使用                         |
+| `@GetConfig`       | 获取配置信息         | `@GetConfig("Server", "host")`       |
+| `@AppService`      | 注册服务模块（单例） | 应用级模块                           |
+| `@AppRequest`      | 请求作用域模块       | 请求级别实例                         |
+| `@AppModel`        | 注入模块依赖         | `@AppModel([A, B])` 构造函数自动注入 |
+| `@RequestMapping`  | 显式定义路由         | `@RequestMapping("/user", "GET")`    |
+| `@Get`             | 定义 GET 路由        | `@Get("/user")`                      |
+| `@Post`            | 定义 POST 路由       | `@Post("/login")`                    |
+| `@GetParam`        | 获取请求参数         | 定义在控制器方法中，依赖于路由装饰器 |
 
-- Email, 发送邮件模块
+> 🔗 更多示例详见 [使用教程文档](/doc/GetParam)
+
+---
+
+## 📦 内置模块
+
+- `Email`：发送邮件模块（支持 SMTP）
+- 计划支持更多模块：Session、Redis 缓存、MQ 模拟等
+
+---
+
+## 👤 作者
+
+**Kyle H Z Liang**
+
+---
+
+## 📄 License
+
+ISC License

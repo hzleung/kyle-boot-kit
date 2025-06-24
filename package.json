@@ -1,43 +1,27 @@
 {
-    "name": "kyle-boot",
-    "version": "1.0.0",
+    "name": "kyleleung-boot-kit",
+    "version": "1.0.1",
     "description": "",
     "main": "./lib/index.js",
     "types": "./lib/index.d.ts",
     "bin": {
         "kyle-sev": "./lib/bin.js"
     },
+    "files": [
+        "lib"
+    ],
     "scripts": {
         "start": "ts-node ./app/index.ts APP_ENV=PROD configPath=./app",
         "dev": "nodemon ./app/index.ts APP_ENV=dev configPath=./app",
         "test": "jest",
-        "cmd": "ts-node ./src/bin.ts init"
+        "cmd": "ts-node ./src/bin.ts init",
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
     },
-    "author": "",
+    "author": "Kyle H Z Liang",
     "license": "ISC",
-    "jest": {
-        "preset": "ts-jest",
-        "testURL": "http://localhost/",
-        "timers": "1000",
-        "moduleNameMapper": {
-            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
-            "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-        },
-        "moduleFileExtensions": [
-            "js",
-            "jsx",
-            "json",
-            "ts",
-            "tsx"
-        ],
-        "transform": {
-            "^.+\\.jsx?$": "babel-jest"
-        },
-        "transformIgnorePatterns": [
-            "./node_modules/(?!(lodash-es))"
-        ]
-    },
     "dependencies": {
+        "kyleleung-common": "^1.0.0",
         "body-parser": "^1.20.3",
         "cookie-parser": "^1.4.5",
         "express": "^4.21.0",
@@ -68,7 +52,6 @@
         "babel-preset-env": "^1.7.0",
         "nodemon": "^2.0.7",
         "regenerator-runtime": "^0.13.7",
-        "ts-jest": "^26.5.6",
         "typescript": "^5.6.2"
     }
 }

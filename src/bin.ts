@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import CommandHelper from "kyle-common/lib/CommandHelper";
+import CommandHelper from "kyleleung-common/lib/CommandHelper";
 import { ConfigTemplate } from "./Config/ConfigTemplate";
 import { Schema } from "./Validation/Schema";
 
