@@ -77,63 +77,61 @@ export const getModuleId = (Target: new (...args: any[]) => any) => {
     return Reflect.getMetadata(META_KEY_MODULE_ID, Target);
 };
 
-export const AppService = <IFactory extends new (...args: any[]) => any>(Factory: IFactory) => {
-    return defineModule<IFactory>(Factory, META_VALUE_MODULE_APPSERVICE, null);
+export const AppService = <IFactory extends new (...args: any[]) => any>(Factory: IFactory, context: ClassDecoratorContext<any>) => {
+    if (context.kind === "class") {
+        return defineModule<IFactory>(Factory, META_VALUE_MODULE_APPSERVICE, context);
+    }
 };
-
 /**
  * 注入模块，自定义模块id
  * @param moduleId 模块Id
  * @returns 
  */
-export const AppServiceEx = <IFactory extends new (...args: any[]) => any>(
-    moduleId: string,
-    opt?: IAppServiceExOption
-) =>
-    function (Factory: IFactory): any {
+export const AppServiceEx = <IFactory extends new (...args: any[]) => any>(moduleId: string, opt?: IAppServiceExOption) => (Factory: IFactory, context: ClassDecoratorContext<any>) => {
+    if (context.kind === "class") {
         if (PROTECT_MODULE_IDS.includes(moduleId) && !opt?.overrideId) {
-            throw new Error(`the module id is protected, cannot be used. (${moduleId})`);
+            throw new Error(`the module id is protect, can not be used. (${moduleId})`);
         }
-
-        return defineModule<IFactory>(Factory, META_VALUE_MODULE_APPSERVICE, null, {
+        return defineModule<IFactory>(Factory, META_VALUE_MODULE_APPSERVICE, context, {
             moduleId
         });
-    };
+    }
+};
 
-export const AppRequest = (Factory: new (...args: any[]) => any) => {
-    return defineModule(Factory, META_VALUE_MODULE_REQUEST, null);
+export const AppRequest = (Factory: new (...args: any[]) => any, context: ClassDecoratorContext<any>) => {
+    return defineModule(Factory, META_VALUE_MODULE_REQUEST, context);
 };
 
 
-
-export const AppModel = <IFactory extends new (...args: any[]) => any, Args extends any[]>(...args: Args) =>
-    function (Factory: IFactory): any {
-        if (!validateModule(Factory)) {
-            throw new Error(`The @AppModel can only be used on a class defined by AppService or AppRequest. (${getModuleId(Factory)})`);
-        }
-
-        const initParams = function (...params: any[]) {
-            const opt: IAnnotationOption = params[0], rest: any[] = params.slice(1);
-            const instanceId = opt.instanceId;
-            const newParams: any[] = [];
-
-            args.forEach((item) => {
-                if (validateModule(item)) {
-                    const obj = createInstance(item, { instanceId });
-                    newParams.push(obj);
-                } else {
-                    newParams.push(item);
-                }
-            });
-
-            return [...newParams, ...rest];
-        };
-
-        Reflect.defineMetadata(META_VALUE_MODULE_PARAM, args, Factory);
-
-        return class extends Factory {
-            constructor(...reset: any[]) {
-                super(...initParams(...reset));
+export const AppModel = <IFactory extends new (...args: any[]) => any, Args extends any[]>(...args: Args) => (Factory: IFactory, context: ClassDecoratorContext<any>) => {
+    if (context.kind !== "class") {
+        throw new Error("@AppModel can only be used on class.");
+    }
+    if (!validateModule(Factory)) {
+        throw new Error(`The @AppModel can only be used on a class was defined by AppService, AppRequest. (${getModuleId(Factory)})`);
+    }
+    const initParams = function (...params: any[]) {
+        const opt: IAnnotationOption = params[0], rest: any[] = params.splice(0, 1);
+        const instanceId = opt.instanceId;
+        const newParams: any[] = [];
+        // 初始化传入Factory参数
+        args.forEach((item) => {
+            if (validateModule(item)) {
+                const obj = createInstance(item, {
+                    instanceId
+                });
+                newParams.push(obj);
+            } else {
+                newParams.push(item);
             }
-        };
+        });
+
+        return [...newParams, ...rest];
     };
+    Reflect.defineMetadata(META_VALUE_MODULE_PARAM, args, Factory);
+    return class extends Factory {
+        constructor(...reset: any[]) {
+            super(...initParams(...reset));
+        }
+    }
+};
